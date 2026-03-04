@@ -11,20 +11,20 @@
 - Frontend: Next.js (App Router), React, TypeScript
 - Styling/UI: Tailwind CSS + 컴포넌트 분리
 - Backend/Data/Realtime/Storage: Supabase
-  - Postgres: `posts`, `comments`
+  - Postgres: `guestbook`, `comments`
   - Realtime: Postgres Changes subscription (polling 금지)
   - Storage: 이미지/드로잉 파일 저장
 
 ## 3) High-Level Flow
 1. 사용자가 등록 화면에서 글 + 미디어(업로드/드로잉) 입력
 2. 미디어를 Supabase Storage에 업로드 후 public/signed URL 획득
-3. `posts` 테이블에 레코드 삽입
-4. 보드 화면은 `posts` 최신순 조회 + Realtime `INSERT/UPDATE/DELETE` 구독
-5. 상세 화면은 `comments` 조회 + `posts/comments` 변경 이벤트 구독
+3. `guestbook` 테이블에 레코드 삽입
+4. 보드 화면은 `guestbook` 최신순 조회 + Realtime `INSERT/UPDATE/DELETE` 구독
+5. 상세 화면은 `comments` 조회 + `guestbook/comments` 변경 이벤트 구독
 6. 댓글 작성 시 `comments` 삽입, 모든 접속자 화면 즉시 업데이트
 
 ## 4) Data Model
-### posts
+### guestbook
 - `id` (uuid, pk)
 - `author` (text, not null)
 - `message` (text, not null)
@@ -35,14 +35,14 @@
 
 ### comments
 - `id` (uuid, pk)
-- `post_id` (uuid, fk -> posts.id on delete cascade)
+- `post_id` (uuid, fk -> guestbook.id on delete cascade)
 - `author` (text, not null)
 - `content` (text, not null)
 - `created_at` (timestamptz default now())
 
 ## 5) Realtime Strategy
 - Board:
-  - `posts` table change events 구독 (`INSERT`, `UPDATE`, `DELETE`)
+  - `guestbook` table change events 구독 (`INSERT`, `UPDATE`, `DELETE`)
   - 새 글, 수정, 삭제를 로컬 상태에 즉시 반영
 - Detail:
   - 선택된 `post_id` 기준으로 `comments` change events 구독
@@ -59,7 +59,25 @@
   - 읽기: 공개 조회 허용
   - 쓰기: 허용 정책 범위를 명시적으로 제한
 - 업로드 파일명 충돌 방지:
-  - UUID 기반 경로 사용 (`posts/{postId}/{uuid}.webp`)
+  - UUID 기반 경로 사용 (`guestbook/{postId}/{uuid}.webp`)
+
+## 6-1) AuthN/AuthZ Target Architecture (Planned)
+- 인증 공급자: Supabase Auth (email OTP 또는 OAuth, 클라이언트 SDK 기반 세션 유지)
+- 사용자 식별: `auth.users.id`를 기준으로 `public.profiles(id uuid pk)` 1:1 매핑
+- 데이터 소유권:
+  - `guestbook.user_id -> auth.users.id`
+  - `comments.user_id -> auth.users.id`
+  - 기존 익명 데이터 호환을 위해 1차는 `user_id nullable`로 시작
+- 권한 모델(목표):
+  - `SELECT`: 공개(anon/authenticated)
+  - `INSERT`: 인증 사용자만, `with check (auth.uid() = user_id)`
+  - `UPDATE/DELETE`: 작성자 본인만, `using (auth.uid() = user_id)`
+- 스토리지 권한(목표):
+  - 읽기 공개 유지(요구사항상 공개 보드)
+  - 업로드/수정/삭제는 인증 사용자 + 본인 경로만 허용
+  - 권장 경로: `guestbook-media/{auth.uid()}/{post_id}/{uuid}.{ext}`
+- 실시간 권한:
+  - Realtime은 테이블 RLS를 따르므로 정책 전환 후에도 기존 `guestbook/comments` 구독 구조는 유지
 
 ## 7) Suggested Project Structure
 ```text

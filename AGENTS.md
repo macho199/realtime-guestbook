@@ -16,10 +16,15 @@
 - Prefer small, verifiable milestones.
 - Reflect completed milestones in `memory-bank/progress.md` immediately.
 
-## Current Focus (2026-03-04 08:18 UTC)
-- Next.js 실행 스캐폴딩 추가 완료 (`package.json`, `tsconfig.json`, `next.config.mjs`, `next-env.d.ts`).
-- 사용자 요구 반영: `npm start`로 개발 서버 실행되도록 스크립트 구성.
-- 다음 우선순위: 패키지 설치 제한 환경에서의 의존성 설치 경로 확인 후 실제 실행 검증.
+## Current Focus (2026-03-04 09:55 UTC)
+- Supabase 연동 1차 완료: `@supabase/supabase-js` 설치 및 브라우저 클라이언트 추가.
+- `guestbook` 기준 실시간 연결: 조회/등록/`INSERT|UPDATE|DELETE` 구독을 `src/app/page.tsx`에 반영.
+- 마이그레이션 정리: 신규 스키마(`0001`) + 기존 `posts` -> `guestbook` rename(`0002`) + 정책 보강(`0003`) + 미디어 확장(`0004`, `0005`).
+- 레거시 `content` 컬럼 스키마 호환 fallback 추가(기존 프로젝트 데이터 보호).
+- 운영 이슈 수정: `guestbook` RLS 정책 누락으로 인한 INSERT 실패 해결 완료.
+- 업로드/드로잉 기능 구현 완료: 스토리지 업로드 + 캔버스 드로잉 + 파일 검증.
+- 댓글 실시간 구현 완료: 상세 모달 + `comments` 구독 + 정책/테이블/Realtime publication 구성(`0006`, `0007`).
+- 다음 우선순위: 인증/인가(AuthN/AuthZ) 도입을 위한 스키마/RLS/클라이언트 마이그레이션 계획 수립 및 단계적 적용.
 
 ## Skills
 A skill is a set of local instructions to follow that is stored in a `SKILL.md` file. Below is the list of skills that can be used. Each entry includes a name, description, and file path so you can open the source for full instructions when using a specific skill.
