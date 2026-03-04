@@ -1,0 +1,99 @@
+# Realtime Guestbook Architecture
+
+## 1) Product Goal
+새로고침 없이 실시간으로 반영되는 전자 방명록 웹앱을 구축한다.
+
+- 방문자는 이름/한 줄 메시지와 함께 `사진 업로드` 또는 `캔버스 드로잉`으로 게시물을 생성한다.
+- 보드 화면에서 게시물이 포스트잇 카드 형태로 표시된다.
+- 상세 화면에서 댓글/게시물 변경 사항이 WebSocket 기반 구독으로 즉시 반영된다.
+
+## 2) Tech Stack (Recommended)
+- Frontend: Next.js (App Router), React, TypeScript
+- Styling/UI: Tailwind CSS + 컴포넌트 분리
+- Backend/Data/Realtime/Storage: Supabase
+  - Postgres: `posts`, `comments`
+  - Realtime: Postgres Changes subscription (polling 금지)
+  - Storage: 이미지/드로잉 파일 저장
+
+## 3) High-Level Flow
+1. 사용자가 등록 화면에서 글 + 미디어(업로드/드로잉) 입력
+2. 미디어를 Supabase Storage에 업로드 후 public/signed URL 획득
+3. `posts` 테이블에 레코드 삽입
+4. 보드 화면은 `posts` 최신순 조회 + Realtime `INSERT/UPDATE/DELETE` 구독
+5. 상세 화면은 `comments` 조회 + `posts/comments` 변경 이벤트 구독
+6. 댓글 작성 시 `comments` 삽입, 모든 접속자 화면 즉시 업데이트
+
+## 4) Data Model
+### posts
+- `id` (uuid, pk)
+- `author` (text, not null)
+- `message` (text, not null)
+- `media_url` (text, not null)
+- `media_type` (text check: `image` | `drawing`)
+- `created_at` (timestamptz default now())
+- `updated_at` (timestamptz default now())
+
+### comments
+- `id` (uuid, pk)
+- `post_id` (uuid, fk -> posts.id on delete cascade)
+- `author` (text, not null)
+- `content` (text, not null)
+- `created_at` (timestamptz default now())
+
+## 5) Realtime Strategy
+- Board:
+  - `posts` table change events 구독 (`INSERT`, `UPDATE`, `DELETE`)
+  - 새 글, 수정, 삭제를 로컬 상태에 즉시 반영
+- Detail:
+  - 선택된 `post_id` 기준으로 `comments` change events 구독
+  - 댓글 삽입/삭제를 모달 열린 상태에서 즉시 반영
+- 연결 복구:
+  - 구독 재연결 시 최신 목록 재조회(정합성 보장)
+
+## 6) Security & Validation
+- 입력 검증:
+  - `author`, `message`, `content` 길이 제한
+  - 파일 MIME 타입: JPG/PNG/WebP만 허용
+  - 파일 크기 제한(예: 5MB)
+- RLS:
+  - 읽기: 공개 조회 허용
+  - 쓰기: 허용 정책 범위를 명시적으로 제한
+- 업로드 파일명 충돌 방지:
+  - UUID 기반 경로 사용 (`posts/{postId}/{uuid}.webp`)
+
+## 7) Suggested Project Structure
+```text
+src/
+  app/
+    page.tsx                    # 등록 + 보드(또는 등록 화면)
+    board/page.tsx              # 포스트잇 보드
+    post/[id]/page.tsx          # 상세 페이지(선택)
+  components/
+    guestbook/
+      PostForm.tsx
+      DrawingCanvas.tsx
+      StickyBoard.tsx
+      StickyCard.tsx
+      PostDetailModal.tsx
+      CommentList.tsx
+      CommentForm.tsx
+  lib/
+    supabase/
+      client.ts
+      realtime.ts
+    validation/
+      post.ts
+      comment.ts
+  types/
+    post.ts
+    comment.ts
+supabase/
+  migrations/
+    0001_init_guestbook.sql
+```
+
+## 8) Non-Functional Requirements
+- 모바일/데스크톱 반응형
+- 로딩/에러 상태 표시
+- 기능 단위 모듈 분리 및 재사용성 유지
+- 기본 테스트(폼 검증, 실시간 반영 시나리오) 포함
