@@ -5,8 +5,8 @@
 - Last updated: 2026-03-04
 
 ## Current Status
-- 상태: UI Bootstrapping in progress
-- 전체 진행률: 25%
+- 상태: UI + Runtime scaffolding in progress
+- 전체 진행률: 35%
 
 ## Completed
 - [x] 요구사항 초안 수집 및 목표 정의
@@ -20,9 +20,12 @@
   - `src/app/page.tsx`에 기본 화면/상태 흐름 추가
   - `PostForm`, `StickyBoard`, `StickyCard` 컴포넌트 분리
   - 포스트잇 테마/레이아웃 CSS 추가
+- [x] Next.js 실행 스캐폴딩 구성
+  - `package.json` 스크립트 추가 (`npm start` -> `next dev`)
+  - `tsconfig.json`, `next.config.mjs`, `next-env.d.ts`, `.gitignore`, `README.md` 추가
 
 ## In Progress
-- [ ] 프로젝트 초기 스캐폴딩 보완 (Next.js 설정 파일, 실행 스크립트)
+- [ ] 의존성 설치/실행 검증 (환경 정책으로 npm registry 접근 제한 발생)
 - [ ] 등록 화면 기능 고도화 (업로드/드로잉 연결)
 
 ## Next Up
@@ -37,3 +40,4 @@
 - 실시간 이벤트 중복 처리 및 구독 해제 타이밍 관리 필요
 - 대용량 이미지 업로드 시 UX 저하 가능성(압축/리사이즈 고려)
 - 익명 쓰기 정책 범위가 넓으면 스팸 위험이 있으므로 정책 세분화 필요
+- 현재 실행 환경에서 npm registry `403 Forbidden`으로 의존성 설치가 차단됨

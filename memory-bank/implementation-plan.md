@@ -6,10 +6,10 @@
 - 실시간 조건: Polling 금지, WebSocket 구독 사용
 
 ## 1) Setup
-1. Next.js(TypeScript) 프로젝트 초기화
-2. UI 기본 세팅(Tailwind + 공통 레이아웃)
-3. Supabase SDK 설치 및 환경변수 구성
-4. `.env.local` 템플릿 정의
+1. [x] Next.js(TypeScript) 프로젝트 초기화 파일 구성
+2. [ ] UI 기본 세팅(Tailwind + 공통 레이아웃)
+3. [ ] Supabase SDK 설치 및 환경변수 구성
+4. [ ] `.env.local` 템플릿 정의
 
 ## 2) Database & Storage
 1. SQL 마이그레이션 생성
@@ -66,7 +66,7 @@
 
 ## 7) Deliverables Mapping
 - 1) 프로젝트 구조 설명: `memory-bank/architecure.md` + 실제 `src` 구조
-- 2) 초기 설정 명령어: README(추가 예정)
+- 2) 초기 설정 명령어: README
 - 3) 핵심 코드: 페이지/컴포넌트/구독/SQL 마이그레이션(구현 단계에서 작성)
-- 4) 실행 방법: README(추가 예정)
+- 4) 실행 방법: README
 - 5) 테스트 시나리오: 본 문서 6번 + 체크리스트(추가 예정)

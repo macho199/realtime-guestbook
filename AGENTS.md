@@ -16,9 +16,10 @@
 - Prefer small, verifiable milestones.
 - Reflect completed milestones in `memory-bank/progress.md` immediately.
 
-## Current Focus (2026-03-04 08:07 UTC)
-- UI 구현 1차 진행 중: `PostForm`, `StickyBoard`, `StickyCard`, `src/app/page.tsx` 구성 완료.
-- 다음 우선순위: Next.js 실행 스캐폴딩 보완 및 Supabase 연동 준비.
+## Current Focus (2026-03-04 08:18 UTC)
+- Next.js 실행 스캐폴딩 추가 완료 (`package.json`, `tsconfig.json`, `next.config.mjs`, `next-env.d.ts`).
+- 사용자 요구 반영: `npm start`로 개발 서버 실행되도록 스크립트 구성.
+- 다음 우선순위: 패키지 설치 제한 환경에서의 의존성 설치 경로 확인 후 실제 실행 검증.
 
 ## Skills
 A skill is a set of local instructions to follow that is stored in a `SKILL.md` file. Below is the list of skills that can be used. Each entry includes a name, description, and file path so you can open the source for full instructions when using a specific skill.
