@@ -65,18 +65,18 @@
 ```text
 src/
   app/
-    page.tsx                    # 등록 + 보드(또는 등록 화면)
-    board/page.tsx              # 포스트잇 보드
-    post/[id]/page.tsx          # 상세 페이지(선택)
+    page.tsx                    # 등록 + 보드(초기 UI 1차 구현 완료)
+    board/page.tsx              # 포스트잇 보드 (예정)
+    post/[id]/page.tsx          # 상세 페이지(예정)
   components/
     guestbook/
-      PostForm.tsx
-      DrawingCanvas.tsx
-      StickyBoard.tsx
-      StickyCard.tsx
-      PostDetailModal.tsx
-      CommentList.tsx
-      CommentForm.tsx
+      PostForm.tsx              # 구현됨
+      DrawingCanvas.tsx         # 예정
+      StickyBoard.tsx           # 구현됨
+      StickyCard.tsx            # 구현됨
+      PostDetailModal.tsx       # 예정
+      CommentList.tsx           # 예정
+      CommentForm.tsx           # 예정
   lib/
     supabase/
       client.ts
@@ -97,3 +97,6 @@ supabase/
 - 로딩/에러 상태 표시
 - 기능 단위 모듈 분리 및 재사용성 유지
 - 기본 테스트(폼 검증, 실시간 반영 시나리오) 포함
+
+## 9) Decision Log
+- 2026-03-04 08:07 UTC: UI 구현 1차는 서버 연동 이전에 클라이언트 상태 기반으로 폼/보드 컴포넌트 구조를 먼저 고정하기로 결정.
